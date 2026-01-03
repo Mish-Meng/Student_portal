@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay Fees - School Portal</title>
+  <style>
+    :root{--accent:#ff7200; --accent-light:#ff8c33; --bg:#f8f9fa; --text:#333; --card:#fff; --border:#e9ecef;}
+    *{margin:0; padding:0; box-sizing:border-box;}
+    body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); color:var(--text); line-height:1.6; min-height:100vh;}
+    
+    .header{background:linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color:#fff; padding:1.5rem 0; box-shadow:0 4px 15px rgba(255,114,0,0.3); position:relative; overflow:hidden;}
+    .header::before{content:""; position:absolute; top:0; left:0; right:0; bottom:0; background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>'); opacity:0.3;}
+    .header-content{max-width:1200px; margin:0 auto; padding:0 1rem; display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1;}
+    .logo{font-size:1.8rem; font-weight:700; text-shadow:0 2px 4px rgba(0,0,0,0.2);}
+    .nav a{color:#fff; text-decoration:none; margin-left:2rem; font-weight:500; padding:0.5rem 1rem; border-radius:20px; transition:all 0.3s ease; position:relative;}
+    .nav a:hover{background:rgba(255,255,255,0.2); transform:translateY(-2px);}
+
+    .main{max-width:600px; margin:2rem auto; padding:0 1rem;}
+    .page-title{text-align:center; margin-bottom:2.5rem; position:relative;}
+    .page-title::before{content:""; position:absolute; top:-15px; left:50%; transform:translateX(-50%); width:60px; height:3px; background:linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius:2px;}
+    .page-title h1{background:linear-gradient(135deg, var(--accent), var(--accent-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem; font-weight:800; font-size:2.5rem;}
+    .page-title p{color:#666; font-size:1.1rem;}
+
+    .payment-form{background:var(--card); border-radius:16px; padding:2.5rem; box-shadow:0 8px 25px rgba(0,0,0,0.1); border:1px solid var(--border); position:relative; overflow:hidden; animation:fadeInUp 0.6s ease;}
+    .payment-form::before{content:""; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, var(--accent), var(--accent-light));}
+    .form-group{margin-bottom:1.8rem; position:relative;}
+    label{display:block; margin-bottom:0.8rem; font-weight:600; color:var(--text); font-size:1rem;}
+    input, select{width:100%; padding:1rem; border:2px solid var(--border); border-radius:12px; font-size:1rem; background:var(--card); transition:all 0.3s ease; position:relative;}
+    input:focus, select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 4px rgba(255,114,0,0.1); transform:translateY(-2px);}
+    input:hover, select:hover{border-color:var(--accent-light);}
+
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;}
+    
+    .btn{display:inline-block; background:linear-gradient(135deg, var(--accent), var(--accent-light)); color:#fff; text-decoration:none; padding:1.2rem 2rem; border-radius:30px; font-weight:600; font-size:1.1rem; border:none; cursor:pointer; transition:all 0.3s ease; width:100%; box-shadow:0 4px 15px rgba(255,114,0,0.3); position:relative; overflow:hidden;}
+    .btn::before{content:""; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition:left 0.5s ease;}
+    .btn:hover::before{left:100%;}
+    .btn:hover{transform:translateY(-3px); box-shadow:0 8px 25px rgba(255,114,0,0.4);}
+    
+    .back-link{text-align:center; margin-top:2rem;}
+    .back-link a{color:var(--accent); text-decoration:none; font-weight:600; padding:0.8rem 1.5rem; border-radius:20px; transition:all 0.3s ease; display:inline-block;}
+    .back-link a:hover{background:rgba(255,114,0,0.1); transform:translateX(-5px);}
+
+    @keyframes fadeInUp{from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">School Portal</div>
+      <nav class="nav">
+        <a href="simple-home.html">Home</a>
+        <a href="simple-events.html">Events</a>
+        <a href="simple-contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="page-title">
+      <h1>Pay School Fees</h1>
+      <p>Quick and secure payment</p>
+    </div>
+
+    <form class="payment-form">
+      <div class="form-group">
+        <label for="studentName">Student Name</label>
+        <input type="text" id="studentName" name="studentName" placeholder="Enter student's full name" required>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label for="studentId">Student ID</label>
+          <input type="text" id="studentId" name="studentId" placeholder="e.g., PS1234" required>
+        </div>
+        <div class="form-group">
+          <label for="amount">Amount (KES)</label>
+          <input type="number" id="amount" name="amount" min="100" placeholder="e.g., 5000" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="paymentMethod">Payment Method</label>
+        <select id="paymentMethod" name="paymentMethod" required>
+          <option value="">Choose payment method</option>
+          <option value="mpesa">M-Pesa</option>
+          <option value="card">Credit/Debit Card</option>
+          <option value="bank">Bank Transfer</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="+254 712 345 678" required>
+      </div>
+
+      <button type="submit" class="btn">Pay Now</button>
+    </form>
+
+    <div class="back-link">
+      <a href="simple-home.html">← Back to Home</a>
+    </div>
+  </main>
+</body>
+</html> 
