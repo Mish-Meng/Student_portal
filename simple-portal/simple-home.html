@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Portal - Simple</title>
+  <style>
+    :root{--accent:#ff7200; --accent-light:#ff8c33; --bg:#f8f9fa; --text:#333; --card:#fff; --border:#e9ecef;}
+    *{margin:0; padding:0; box-sizing:border-box;}
+    body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); color:var(--text); line-height:1.6; min-height:100vh;}
+    
+    .header{background:linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color:#fff; padding:1.5rem 0; box-shadow:0 4px 15px rgba(255,114,0,0.3); position:relative; overflow:hidden;}
+    .header::before{content:""; position:absolute; top:0; left:0; right:0; bottom:0; background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>'); opacity:0.3;}
+    .header-content{max-width:1200px; margin:0 auto; padding:0 1rem; display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1;}
+    .logo{font-size:1.8rem; font-weight:700; text-shadow:0 2px 4px rgba(0,0,0,0.2);}
+    .nav a{color:#fff; text-decoration:none; margin-left:2rem; font-weight:500; padding:0.5rem 1rem; border-radius:20px; transition:all 0.3s ease; position:relative;}
+    .nav a:hover{background:rgba(255,255,255,0.2); transform:translateY(-2px);}
+
+    .main{max-width:1200px; margin:2rem auto; padding:0 1rem;}
+    .welcome{text-align:center; margin-bottom:4rem; position:relative;}
+    .welcome::before{content:""; position:absolute; top:-20px; left:50%; transform:translateX(-50%); width:80px; height:4px; background:linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius:2px;}
+    .welcome h1{font-size:3rem; background:linear-gradient(135deg, var(--accent), var(--accent-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:1rem; font-weight:800;}
+    .welcome p{font-size:1.2rem; color:#666; max-width:600px; margin:0 auto;}
+
+    .quick-actions{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:2rem; margin-bottom:4rem;}
+    .action-card{background:var(--card); border-radius:16px; padding:2.5rem 2rem; box-shadow:0 8px 25px rgba(0,0,0,0.1); border:1px solid var(--border); text-align:center; transition:all 0.4s ease; position:relative; overflow:hidden;}
+    .action-card::before{content:""; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, var(--accent), var(--accent-light)); transform:scaleX(0); transition:transform 0.3s ease;}
+    .action-card:hover::before{transform:scaleX(1);}
+    .action-card:hover{transform:translateY(-8px); box-shadow:0 15px 35px rgba(255,114,0,0.2); border-color:var(--accent);}
+    .action-card .icon{font-size:4rem; margin-bottom:1.5rem; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.1));}
+    .action-card h3{color:var(--accent); margin-bottom:0.8rem; font-size:1.4rem; font-weight:700;}
+    .action-card p{color:#666; margin-bottom:2rem; font-size:1rem; line-height:1.6;}
+    .btn{display:inline-block; background:linear-gradient(135deg, var(--accent), var(--accent-light)); color:#fff; text-decoration:none; padding:1rem 2rem; border-radius:25px; font-weight:600; transition:all 0.3s ease; box-shadow:0 4px 15px rgba(255,114,0,0.3); position:relative; overflow:hidden;}
+    .btn::before{content:""; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition:left 0.5s ease;}
+    .btn:hover::before{left:100%;}
+    .btn:hover{transform:translateY(-2px); box-shadow:0 6px 20px rgba(255,114,0,0.4);}
+
+    .info-section{background:var(--card); border-radius:16px; padding:2.5rem; box-shadow:0 8px 25px rgba(0,0,0,0.1); border:1px solid var(--border); position:relative; overflow:hidden;}
+    .info-section::before{content:""; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, var(--accent), var(--accent-light));}
+    .info-section h2{color:var(--accent); margin-bottom:1.5rem; font-size:1.8rem; font-weight:700;}
+    .info-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:1.5rem;}
+    .info-item{display:flex; align-items:center; gap:1rem; padding:1rem; border-radius:12px; transition:all 0.3s ease; border:1px solid transparent;}
+    .info-item:hover{background:rgba(255,114,0,0.05); border-color:var(--accent); transform:translateX(5px);}
+    .info-item .icon{color:var(--accent); font-size:1.5rem; filter:drop-shadow(0 2px 4px rgba(255,114,0,0.3));}
+
+    .footer{background:linear-gradient(135deg, #333 0%, #555 100%); color:#fff; text-align:center; padding:2rem 0; margin-top:4rem; position:relative;}
+    .footer::before{content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--accent), var(--accent-light));}
+
+    @keyframes fadeInUp{from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);}}
+    .action-card{animation:fadeInUp 0.6s ease forwards;}
+    .action-card:nth-child(1){animation-delay:0.1s;}
+    .action-card:nth-child(2){animation-delay:0.2s;}
+    .action-card:nth-child(3){animation-delay:0.3s;}
+    .action-card:nth-child(4){animation-delay:0.4s;}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">School Portal</div>
+      <nav class="nav">
+        <a href="simple-home.html">Home</a>
+        <a href="simple-events.html">Events</a>
+        <a href="simple-contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="welcome">
+      <h1>Welcome to Our School</h1>
+      <p>Quick access to what matters most for your child's education</p>
+    </section>
+
+    <section class="quick-actions">
+      <div class="action-card">
+        <div class="icon">👤</div>
+        <h3>Student Portal</h3>
+        <p>View grades, attendance, and academic progress</p>
+        <a href="simple-portal.html" class="btn">Login</a>
+      </div>
+
+      <div class="action-card">
+        <div class="icon">💳</div>
+        <h3>Pay Fees</h3>
+        <p>Quick and secure payment for school fees</p>
+        <a href="simple-payment.html" class="btn">Pay Now</a>
+      </div>
+
+      <div class="action-card">
+        <div class="icon">📅</div>
+        <h3>School Events</h3>
+        <p>Stay updated with important dates and activities</p>
+        <a href="simple-events.html" class="btn">View Events</a>
+      </div>
+
+      <div class="action-card">
+        <div class="icon">📞</div>
+        <h3>Contact Us</h3>
+        <p>Get in touch with teachers and administration</p>
+        <a href="simple-contact.html" class="btn">Contact</a>
+      </div>
+    </section>
+
+    <section class="info-section">
+      <h2>Quick Information</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="icon">🏫</span>
+          <span>School Hours: 8:00 AM - 3:30 PM</span>
+        </div>
+        <div class="info-item">
+          <span class="icon">📞</span>
+          <span>Phone: +254 712 345 678</span>
+        </div>
+        <div class="info-item">
+          <span class="icon">📧</span>
+          <span>Email: info@schoolportal.com</span>
+        </div>
+        <div class="info-item">
+          <span class="icon">📍</span>
+          <span>Address: Main Street, Nairobi</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 School Portal. Simple, Fast, Reliable.</p>
+  </footer>
+</body>
+</html> 

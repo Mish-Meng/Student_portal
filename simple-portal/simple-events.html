@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Events - School Portal</title>
+  <style>
+    :root{--accent:#ff7200; --accent-light:#ff8c33; --bg:#f8f9fa; --text:#333; --card:#fff; --border:#e9ecef;}
+    *{margin:0; padding:0; box-sizing:border-box;}
+    body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); color:var(--text); line-height:1.6; min-height:100vh;}
+    
+    .header{background:linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); color:#fff; padding:1.5rem 0; box-shadow:0 4px 15px rgba(255,114,0,0.3); position:relative; overflow:hidden;}
+    .header::before{content:""; position:absolute; top:0; left:0; right:0; bottom:0; background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>'); opacity:0.3;}
+    .header-content{max-width:1200px; margin:0 auto; padding:0 1rem; display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1;}
+    .logo{font-size:1.8rem; font-weight:700; text-shadow:0 2px 4px rgba(0,0,0,0.2);}
+    .nav a{color:#fff; text-decoration:none; margin-left:2rem; font-weight:500; padding:0.5rem 1rem; border-radius:20px; transition:all 0.3s ease; position:relative;}
+    .nav a:hover{background:rgba(255,255,255,0.2); transform:translateY(-2px);}
+
+    .main{max-width:1200px; margin:2rem auto; padding:0 1rem;}
+    .page-title{text-align:center; margin-bottom:3rem; position:relative;}
+    .page-title::before{content:""; position:absolute; top:-15px; left:50%; transform:translateX(-50%); width:80px; height:3px; background:linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius:2px;}
+    .page-title h1{background:linear-gradient(135deg, var(--accent), var(--accent-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:0.5rem; font-weight:800; font-size:2.5rem;}
+    .page-title p{color:#666; font-size:1.1rem; max-width:600px; margin:0 auto;}
+
+    .events-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:2rem; margin-bottom:3rem;}
+    .event-card{background:var(--card); border-radius:16px; padding:2rem; box-shadow:0 8px 25px rgba(0,0,0,0.1); border:1px solid var(--border); transition:all 0.4s ease; position:relative; overflow:hidden; animation:fadeInUp 0.6s ease forwards;}
+    .event-card::before{content:""; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, var(--accent), var(--accent-light)); transform:scaleX(0); transition:transform 0.3s ease;}
+    .event-card:hover::before{transform:scaleX(1);}
+    .event-card:hover{transform:translateY(-5px); box-shadow:0 15px 35px rgba(255,114,0,0.15); border-color:var(--accent);}
+    .event-date{color:var(--accent); font-weight:700; font-size:0.95rem; margin-bottom:0.8rem; display:flex; align-items:center; gap:0.5rem;}
+    .event-title{font-size:1.3rem; font-weight:700; margin-bottom:1rem; color:var(--text);}
+    .event-desc{color:#666; line-height:1.6; margin-bottom:1.5rem; font-size:0.95rem;}
+    .event-meta{display:flex; justify-content:space-between; align-items:center; font-size:0.9rem; color:#888; padding-top:1rem; border-top:1px solid var(--border);}
+
+    .news-section{margin-top:4rem;}
+    .news-section h2{color:var(--accent); margin-bottom:2rem; font-size:1.8rem; font-weight:700; text-align:center; position:relative;}
+    .news-section h2::after{content:""; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%); width:60px; height:3px; background:linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius:2px;}
+    .news-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem;}
+    .news-card{background:var(--card); border-radius:12px; padding:1.5rem; box-shadow:0 4px 15px rgba(0,0,0,0.08); border:1px solid var(--border); transition:all 0.3s ease; animation:fadeInUp 0.6s ease forwards;}
+    .news-card:hover{transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,0,0,0.12);}
+    .news-date{color:var(--accent); font-size:0.9rem; margin-bottom:0.8rem; font-weight:600;}
+    .news-title{font-weight:700; margin-bottom:0.8rem; color:var(--text); font-size:1.1rem;}
+    .news-excerpt{color:#666; line-height:1.5; font-size:0.95rem;}
+
+    .back-home{text-align:center; margin-top:3rem;}
+    .back-btn{display:inline-block; background:linear-gradient(135deg, var(--accent), var(--accent-light)); color:#fff; text-decoration:none; padding:1rem 2rem; border-radius:25px; font-weight:600; transition:all 0.3s ease; box-shadow:0 4px 15px rgba(255,114,0,0.3); position:relative; overflow:hidden;}
+    .back-btn::before{content:""; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition:left 0.5s ease;}
+    .back-btn:hover::before{left:100%;}
+    .back-btn:hover{transform:translateY(-2px); box-shadow:0 6px 20px rgba(255,114,0,0.4);}
+
+    @keyframes fadeInUp{from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);}}
+    .event-card:nth-child(1){animation-delay:0.1s;}
+    .event-card:nth-child(2){animation-delay:0.2s;}
+    .event-card:nth-child(3){animation-delay:0.3s;}
+    .event-card:nth-child(4){animation-delay:0.4s;}
+    .event-card:nth-child(5){animation-delay:0.5s;}
+    .event-card:nth-child(6){animation-delay:0.6s;}
+    .news-card:nth-child(1){animation-delay:0.7s;}
+    .news-card:nth-child(2){animation-delay:0.8s;}
+    .news-card:nth-child(3){animation-delay:0.9s;}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">School Portal</div>
+      <nav class="nav">
+        <a href="simple-home.html">Home</a>
+        <a href="simple-events.html">Events</a>
+        <a href="simple-contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="page-title">
+      <h1>School Events & News</h1>
+      <p>Stay updated with all the exciting activities and important announcements</p>
+    </div>
+
+    <section class="events-section">
+      <div class="events-grid">
+        <div class="event-card">
+          <div class="event-date">📅 March 15, 2025</div>
+          <div class="event-title">Annual Sports Day</div>
+          <div class="event-desc">Join us for a day filled with athletic competitions, team sports, and fun activities. All students from Grade 1-8 will participate in various sports events.</div>
+          <div class="event-meta">
+            <span>⏰ 8:00 AM - 3:00 PM</span>
+            <span>📍 School Grounds</span>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-date">📅 March 22, 2025</div>
+          <div class="event-title">Science Fair Exhibition</div>
+          <div class="event-desc">Students showcase their innovative science projects and experiments. Parents and community members are welcome to attend and support our young scientists.</div>
+          <div class="event-meta">
+            <span>⏰ 10:00 AM - 2:00 PM</span>
+            <span>📍 School Hall</span>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-date">📅 April 5, 2025</div>
+          <div class="event-title">Cultural Day Celebration</div>
+          <div class="event-desc">A colorful celebration of diversity featuring traditional dances, music, costumes, and cultural presentations from different communities.</div>
+          <div class="event-meta">
+            <span>⏰ 9:00 AM - 4:00 PM</span>
+            <span>📍 School Auditorium</span>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-date">📅 April 12, 2025</div>
+          <div class="event-title">Parent-Teacher Conference</div>
+          <div class="event-desc">Important meeting to discuss your child's academic progress, behavior, and areas for improvement. Individual appointments available.</div>
+          <div class="event-meta">
+            <span>⏰ 2:00 PM - 6:00 PM</span>
+            <span>📍 Classrooms</span>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-date">📅 April 20, 2025</div>
+          <div class="event-title">Reading Week</div>
+          <div class="event-desc">A week dedicated to promoting literacy with storytelling sessions, book fairs, reading challenges, and author visits.</div>
+          <div class="event-meta">
+            <span>⏰ All Week</span>
+            <span>📍 Library & Classrooms</span>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-date">📅 May 1, 2025</div>
+          <div class="event-title">School Open Day</div>
+          <div class="event-desc">Prospective parents and students can tour our facilities, meet teachers, and learn about our programs and admission process.</div>
+          <div class="event-meta">
+            <span>⏰ 10:00 AM - 3:00 PM</span>
+            <span>📍 Entire School</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="news-section">
+      <h2>Latest News</h2>
+      <div class="news-grid">
+        <div class="news-card">
+          <div class="news-date">March 10, 2025</div>
+          <div class="news-title">School Wins Regional Math Competition</div>
+          <div class="news-excerpt">Our Grade 6 students secured first place in the county mathematics competition, solving complex problems with creativity and teamwork.</div>
+        </div>
+
+        <div class="news-card">
+          <div class="news-date">March 8, 2025</div>
+          <div class="news-title">New Computer Lab Opening</div>
+          <div class="news-excerpt">We're excited to announce the opening of our new computer lab with 25 modern computers and interactive learning software.</div>
+        </div>
+
+        <div class="news-card">
+          <div class="news-date">March 5, 2025</div>
+          <div class="news-title">Environmental Club Launch</div>
+          <div class="news-excerpt">Students have formed an environmental club to promote sustainability, recycling, and tree planting initiatives in our community.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="back-home">
+      <a href="simple-home.html" class="back-btn">← Back to Home</a>
+    </div>
+  </main>
+</body>
+</html> 
