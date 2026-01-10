@@ -29,27 +29,6 @@ $students_total = getTotal($conn, "students");
 $teachers_total = getTotal($conn, "teachers");
 $classes_total  = getTotal($conn, "classes");
 
-// Get teachers with their assigned classes
-$teachers_with_classes = [];
-$teachers_query = $conn->query("SELECT id, fullname, email, subject FROM teachers ORDER BY fullname ASC");
-while ($teacher = $teachers_query->fetch_assoc()) {
-    $teacher_name = $teacher['fullname'];
-    $classes_query = $conn->query("SELECT grade, subjects, time FROM classes WHERE teacher LIKE '%$teacher_name%' ORDER BY grade ASC");
-    $assigned_classes = [];
-    while ($class = $classes_query->fetch_assoc()) {
-        $assigned_classes[] = $class;
-    }
-    $teachers_with_classes[] = [
-        'id' => $teacher['id'],
-        'fullname' => $teacher['fullname'],
-        'email' => $teacher['email'],
-        'subject' => $teacher['subject'],
-        'classes' => $assigned_classes,
-        'class_count' => count($assigned_classes)
-    ];
-}
-
-
 // 🚪 Logout
 if (isset($_POST['logout'])) {
     session_destroy();
@@ -137,44 +116,11 @@ if (isset($_POST['logout'])) {
       <a href="view_report.php" class="view-btn">View Reports</a>
     </div>
     <div class="card">
-      <h3>School Events</h3>
-      <p>Add or manage school events (Admin Only)</p>
-      <a href="admin_events.php" class="view-btn">Manage Events</a>
-    </div>
-  </div>
+  <h3>School Events</h3>
+  <p>Add or manage school events (Admin Only)</p>
+  <a href="admin_events.php" class="view-btn">Manage Events</a>
+</div>
 
-  <!-- Teachers and Their Assigned Classes Section -->
-  <div style="margin-top: 30px;">
-    <h3 style="color: #ff7200; margin-bottom: 20px; font-size: 22px;">👨‍🏫 Teachers and Their Assigned Classes</h3>
-    
-    <?php if(empty($teachers_with_classes)): ?>
-      <p style="color: rgba(255,255,255,0.7); text-align: center; padding: 20px;">No teachers found.</p>
-    <?php else: ?>
-      <div class="cards">
-        <?php foreach($teachers_with_classes as $teacher): ?>
-          <div class="card">
-            <h3><?= htmlspecialchars($teacher['fullname']) ?></h3>
-            <p style="font-size: 12px; margin-bottom: 8px;">📧 <?= htmlspecialchars($teacher['email']) ?></p>
-            <p style="font-size: 12px; margin-bottom: 12px;">📚 <?= htmlspecialchars($teacher['subject']) ?></p>
-            <span style="font-size: 24px; font-weight: 800; display: block; margin-top: 6px; color: #fff;">
-              <?= $teacher['class_count'] ?>
-            </span>
-            <p style="font-size: 13px; margin-top: 4px;">Class<?= $teacher['class_count'] != 1 ? 'es' : '' ?> Assigned</p>
-            <?php if(empty($teacher['classes'])): ?>
-              <a href="classes.php" class="view-btn" style="margin-top: 10px; font-size: 12px; padding: 8px 12px;">Assign Classes</a>
-            <?php else: ?>
-              <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.2);">
-                <?php foreach($teacher['classes'] as $class): ?>
-                  <div style="font-size: 11px; color: rgba(255,255,255,0.8); margin-bottom: 6px;">
-                    🏫 <?= htmlspecialchars($class['grade']) ?>
-                  </div>
-                <?php endforeach; ?>
-              </div>
-            <?php endif; ?>
-          </div>
-        <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
   </div>
   <?php } ?>
 </div>

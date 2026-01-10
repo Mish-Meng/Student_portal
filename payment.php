@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
       <h1>School Fee Payment</h1>
       <p class="lead">Pay tuition and other fees securely. You will receive a receipt via email.</p>
-      <form action="#" method="POST">
+      <form action="stk_push.php" method="POST">
         <div class="row">
           <div>
             <label for="studentName">Student Name</label>
@@ -123,13 +123,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="email">Parent Email</label>
             <input id="email" name="email" type="email" placeholder="parent@example.com" required>
           </div>
+          <div>
+  <label for="phone">M-Pesa Phone</label>
+  <input id="phone" name="phone" type="text" placeholder="2547XXXXXXXX" required>
+</div>
+
         </div>
         <div class="row">
           <div>
             <label for="method">Payment Method</label>
             <select id="method" name="method" required>
               <option value="">Select method</option>
-              <option>Card</option>
+              <option>Mpesa</option>
               <option>Mobile Money</option>
               <option>Bank Transfer</option>
             </select>

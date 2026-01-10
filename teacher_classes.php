@@ -166,15 +166,8 @@ while ($student = mysqli_fetch_assoc($all_students)) {
 <!-- Main -->
 <div class="main">
   <div class="header">
-    <div>
-      <h2>My Class Assignments</h2>
-      <p>Classes assigned to <?= h($teacher_name) ?></p>
-      <?php if(mysqli_num_rows($classes_query) > 0): ?>
-        <p style="color: var(--muted); font-size: 13px; margin-top: 8px;">
-          💡 You can only view and manage students from these classes. All your actions (marks, attendance) are limited to students in these classes.
-        </p>
-      <?php endif; ?>
-    </div>
+    <h2>My Class Assignments</h2>
+    <p>Classes assigned to <?= h($teacher_name) ?></p>
   </div>
 
   <a href="teacher_dashboard.php" class="btn-secondary">⬅ Back to Dashboard</a>

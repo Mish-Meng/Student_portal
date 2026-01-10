@@ -10,7 +10,6 @@ if (!isset($_SESSION['teacher']) || $_SESSION['role'] != 'teacher') {
 include 'connect.php';
 
 $teacher_id = $_SESSION['teacher_id'];
-$teacher_name = $_SESSION['teacher_name'];
 $message = "";
 
 // Helper to sanitize text output
@@ -18,22 +17,8 @@ function h($value) {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-// Get teacher's assigned class grades
-$teacher_classes_query = mysqli_query($conn, "SELECT grade FROM classes WHERE teacher LIKE '%$teacher_name%'");
-$teacher_class_grades = [];
-while ($row = mysqli_fetch_assoc($teacher_classes_query)) {
-    $teacher_class_grades[] = mysqli_real_escape_string($conn, $row['grade']);
-}
-
-// Build WHERE clause for class filtering (for student dropdown)
-$class_filter_students = '';
-if (!empty($teacher_class_grades)) {
-    $class_list = "'" . implode("','", $teacher_class_grades) . "'";
-    $class_filter_students = "AND class IN ($class_list)";
-}
-
-// Fetch students for select dropdown (only teacher's students)
-$students = mysqli_query($conn, "SELECT id, fullname, adm_no FROM students WHERE 1=1 $class_filter_students ORDER BY fullname ASC");
+// Fetch students for select dropdown
+$students = mysqli_query($conn, "SELECT id, fullname, adm_no FROM students ORDER BY fullname ASC");
 
 // Handle add
 if (isset($_POST['add_result'])) {
@@ -43,28 +28,17 @@ if (isset($_POST['add_result'])) {
     $grade      = trim($_POST['grade'] ?? '');
 
     if ($student_id && $exam_name && $score !== '' && $grade) {
-        // Verify student belongs to teacher's classes
-        $student_check = mysqli_query($conn, "SELECT class FROM students WHERE id = $student_id");
-        if (mysqli_num_rows($student_check) > 0) {
-            $student = mysqli_fetch_assoc($student_check);
-            if (in_array($student['class'], $teacher_class_grades)) {
-                $stmt = mysqli_prepare($conn, "INSERT INTO results (student_id, exam_name, score, result) VALUES (?, ?, ?, ?)");
-                if ($stmt) {
-                    mysqli_stmt_bind_param($stmt, "isis", $student_id, $exam_name, $score, $grade);
-                    if (mysqli_stmt_execute($stmt)) {
-                        $message = "✅ Result added successfully.";
-                    } else {
-                        $message = "❌ Failed to add result: " . mysqli_stmt_error($stmt);
-                    }
-                    mysqli_stmt_close($stmt);
-                } else {
-                    $message = "❌ Failed to prepare statement.";
-                }
+        $stmt = mysqli_prepare($conn, "INSERT INTO results (student_id, exam_name, score, result) VALUES (?, ?, ?, ?)");
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "isis", $student_id, $exam_name, $score, $grade);
+            if (mysqli_stmt_execute($stmt)) {
+                $message = "✅ Result added successfully.";
             } else {
-                $message = "❌ You can only add results for students in your assigned classes.";
+                $message = "❌ Failed to add result: " . mysqli_stmt_error($stmt);
             }
+            mysqli_stmt_close($stmt);
         } else {
-            $message = "❌ Student not found.";
+            $message = "❌ Failed to prepare statement.";
         }
     } else {
         $message = "❌ Please fill in all fields.";
@@ -80,28 +54,17 @@ if (isset($_POST['update_result'])) {
     $grade      = trim($_POST['grade'] ?? '');
 
     if ($result_id && $student_id && $exam_name && $score !== '' && $grade) {
-        // Verify student belongs to teacher's classes
-        $student_check = mysqli_query($conn, "SELECT class FROM students WHERE id = $student_id");
-        if (mysqli_num_rows($student_check) > 0) {
-            $student = mysqli_fetch_assoc($student_check);
-            if (in_array($student['class'], $teacher_class_grades)) {
-                $stmt = mysqli_prepare($conn, "UPDATE results SET student_id=?, exam_name=?, score=?, result=? WHERE id=?");
-                if ($stmt) {
-                    mysqli_stmt_bind_param($stmt, "isisi", $student_id, $exam_name, $score, $grade, $result_id);
-                    if (mysqli_stmt_execute($stmt)) {
-                        $message = "✅ Result updated successfully.";
-                    } else {
-                        $message = "❌ Failed to update result: " . mysqli_stmt_error($stmt);
-                    }
-                    mysqli_stmt_close($stmt);
-                } else {
-                    $message = "❌ Failed to prepare statement.";
-                }
+        $stmt = mysqli_prepare($conn, "UPDATE results SET student_id=?, exam_name=?, score=?, result=? WHERE id=?");
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "isisi", $student_id, $exam_name, $score, $grade, $result_id);
+            if (mysqli_stmt_execute($stmt)) {
+                $message = "✅ Result updated successfully.";
             } else {
-                $message = "❌ You can only update results for students in your assigned classes.";
+                $message = "❌ Failed to update result: " . mysqli_stmt_error($stmt);
             }
+            mysqli_stmt_close($stmt);
         } else {
-            $message = "❌ Student not found.";
+            $message = "❌ Failed to prepare statement.";
         }
     } else {
         $message = "❌ Please fill in all fields.";
@@ -111,31 +74,15 @@ if (isset($_POST['update_result'])) {
 // Handle delete
 if (isset($_GET['delete'])) {
     $delete_id = (int) $_GET['delete'];
-    
-    // Verify result belongs to teacher's student
-    $result_check = mysqli_query($conn, 
-        "SELECT s.class FROM results r 
-         LEFT JOIN students s ON r.student_id = s.id 
-         WHERE r.id = $delete_id"
-    );
-    if (mysqli_num_rows($result_check) > 0) {
-        $result_data = mysqli_fetch_assoc($result_check);
-        if (in_array($result_data['class'], $teacher_class_grades)) {
-            $stmt = mysqli_prepare($conn, "DELETE FROM results WHERE id=?");
-            if ($stmt) {
-                mysqli_stmt_bind_param($stmt, "i", $delete_id);
-                if (mysqli_stmt_execute($stmt)) {
-                    $message = "✅ Result deleted.";
-                } else {
-                    $message = "❌ Failed to delete result: " . mysqli_stmt_error($stmt);
-                }
-                mysqli_stmt_close($stmt);
-            }
+    $stmt = mysqli_prepare($conn, "DELETE FROM results WHERE id=?");
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, "i", $delete_id);
+        if (mysqli_stmt_execute($stmt)) {
+            $message = "✅ Result deleted.";
         } else {
-            $message = "❌ You can only delete results for students in your assigned classes.";
+            $message = "❌ Failed to delete result: " . mysqli_stmt_error($stmt);
         }
-    } else {
-        $message = "❌ Result not found.";
+        mysqli_stmt_close($stmt);
     }
 }
 
@@ -143,29 +90,24 @@ if (isset($_GET['delete'])) {
 $search = trim($_GET['search'] ?? '');
 $results = null;
 
-// Build class filter for WHERE clause (for results query)
-$class_filter_results = '';
-if (!empty($teacher_class_grades)) {
-    $class_list_results = "'" . implode("','", $teacher_class_grades) . "'";
-    $class_filter_results = "AND s.class IN ($class_list_results)";
-}
-
 if ($search !== '') {
     $like = "%{$search}%";
-    $search_escaped = mysqli_real_escape_string($conn, $search);
-    $results = mysqli_query($conn,
+    $stmt = mysqli_prepare($conn,
         "SELECT r.*, s.fullname, s.adm_no
          FROM results r
          LEFT JOIN students s ON r.student_id = s.id
-         WHERE (r.exam_name LIKE '%$search_escaped%' OR s.fullname LIKE '%$search_escaped%' OR s.adm_no LIKE '%$search_escaped%') $class_filter_results
+         WHERE r.exam_name LIKE ? OR s.fullname LIKE ? OR s.adm_no LIKE ?
          ORDER BY r.exam_name ASC"
     );
+    mysqli_stmt_bind_param($stmt, "sss", $like, $like, $like);
+    mysqli_stmt_execute($stmt);
+    $results = mysqli_stmt_get_result($stmt);
+    mysqli_stmt_close($stmt);
 } else {
     $results = mysqli_query($conn,
         "SELECT r.*, s.fullname, s.adm_no
          FROM results r
          LEFT JOIN students s ON r.student_id = s.id
-         WHERE 1=1 $class_filter_results
          ORDER BY r.exam_name ASC"
     );
 }
@@ -297,17 +239,7 @@ if (isset($_GET['edit'])) {
   <div class="page">
     <a href="teacher_dashboard.php" class="secondary-btn">⬅ Back to Dashboard</a>
     <h1>Manage Student Marks</h1>
-    <p style="color:var(--muted);margin-bottom:12px;">Add, edit, or delete student exam results for your assigned classes.</p>
-    <?php if(!empty($teacher_class_grades)): ?>
-      <div style="background: rgba(255,114,0,0.15); border: 1px solid rgba(255,114,0,0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
-        <span style="color: var(--muted); font-size: 13px; margin-right: 8px;">📚 Your Classes:</span>
-        <?php foreach($teacher_class_grades as $grade): ?>
-          <span style="background: rgba(255,114,0,0.25); border: 1px solid var(--accent); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--accent); font-weight: 600;">
-            <?= htmlspecialchars($grade) ?>
-          </span>
-        <?php endforeach; ?>
-      </div>
-    <?php endif; ?>
+    <p style="color:var(--muted);margin-bottom:12px;">Add, edit, or delete student exam results.</p>
 
     <?php if($message): ?>
       <div class="message <?= strpos($message,'❌')!==false?'error':'success' ?>"><?= h($message) ?></div>

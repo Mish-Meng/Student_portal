@@ -11,66 +11,26 @@ if (!isset($_SESSION['admin']) || !isset($_SESSION['role']) || $_SESSION['role']
 $conn = new mysqli("localhost", "root", "", "schoolportal");
 if ($conn->connect_error) die("Connection Failed: " . $conn->connect_error);
 
-$message = "";
-
 // Add new class
 if (isset($_POST['add_class'])) {
-    $grade = mysqli_real_escape_string($conn, $_POST['grade']);
-    $teacher = mysqli_real_escape_string($conn, $_POST['teacher']);
-    $subjects = mysqli_real_escape_string($conn, $_POST['subjects']);
-    $time = mysqli_real_escape_string($conn, $_POST['time']);
+    $grade = $_POST['grade'];
+    $teacher = $_POST['teacher'];
+    $subjects = $_POST['subjects'];
+    $time = $_POST['time'];
 
     $stmt = mysqli_prepare($conn, "INSERT INTO classes (grade, teacher, subjects, time) VALUES (?, ?, ?, ?)");
     mysqli_stmt_bind_param($stmt, "ssss", $grade, $teacher, $subjects, $time);
-    if (mysqli_stmt_execute($stmt)) {
-        $message = "✅ Class added successfully!";
-    } else {
-        $message = "❌ Error adding class: " . mysqli_error($conn);
-    }
-    mysqli_stmt_close($stmt);
-}
-
-// Edit class
-if (isset($_POST['edit_class'])) {
-    $id = (int)$_POST['id'];
-    $grade = mysqli_real_escape_string($conn, $_POST['grade']);
-    $teacher = mysqli_real_escape_string($conn, $_POST['teacher']);
-    $subjects = mysqli_real_escape_string($conn, $_POST['subjects']);
-    $time = mysqli_real_escape_string($conn, $_POST['time']);
-
-    $stmt = mysqli_prepare($conn, "UPDATE classes SET grade=?, teacher=?, subjects=?, time=? WHERE id=?");
-    mysqli_stmt_bind_param($stmt, "ssssi", $grade, $teacher, $subjects, $time, $id);
-    if (mysqli_stmt_execute($stmt)) {
-        $message = "✅ Class updated successfully!";
-    } else {
-        $message = "❌ Error updating class: " . mysqli_error($conn);
-    }
-    mysqli_stmt_close($stmt);
+    mysqli_stmt_execute($stmt);
 }
 
 // Delete class
 if (isset($_GET['delete'])) {
-    $id = (int)$_GET['delete'];
-    if (mysqli_query($conn, "DELETE FROM classes WHERE id=$id")) {
-        $message = "✅ Class deleted successfully!";
-    } else {
-        $message = "❌ Error deleting class: " . mysqli_error($conn);
-    }
+    $id = $_GET['delete'];
+    mysqli_query($conn, "DELETE FROM classes WHERE id=$id");
 }
-
-// Fetch all teachers for dropdown
-$teachers_result = mysqli_query($conn, "SELECT id, fullname FROM teachers ORDER BY fullname ASC");
 
 // Fetch all classes
 $result = mysqli_query($conn, "SELECT * FROM classes ORDER BY id ASC");
-
-// Fetch class for editing
-$edit_class = null;
-if (isset($_GET['edit'])) {
-    $edit_id = (int)$_GET['edit'];
-    $edit_result = mysqli_query($conn, "SELECT * FROM classes WHERE id=$edit_id");
-    $edit_class = mysqli_fetch_assoc($edit_result);
-}
 ?>
 
 <!DOCTYPE html>
@@ -113,17 +73,12 @@ form {
     box-shadow:0 6px 20px rgba(0,0,0,0.08);
 }
 
-form input, form select {
+form input {
     padding:12px 15px;
     border-radius:8px;
     border:1px solid #d1d5db;
     font-size:14px;
     flex:1 1 200px;
-    background:#fff;
-}
-
-form select {
-    cursor:pointer;
 }
 
 form button {
@@ -193,44 +148,15 @@ a.delete-btn:hover {
 </head>
 <body>
 
-<div style="text-align:center; margin-bottom:20px;">
-    <a href="dashboard.php" style="background:#6b7280; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block; margin-bottom:20px;">← Back to Dashboard</a>
-</div>
-
 <h2>Manage Classes</h2>
 
-<?php if($message): ?>
-    <div style="background: <?= strpos($message,'❌')!==false ? '#fee2e2' : '#d1fae5' ?>; color: <?= strpos($message,'❌')!==false ? '#991b1b' : '#065f46' ?>; padding: 12px; border-radius: 8px; margin: 0 auto 20px; max-width: 800px; text-align: center;">
-        <?= htmlspecialchars($message) ?>
-    </div>
-<?php endif; ?>
-
-<!-- Add/Edit Class Form -->
+<!-- Add Class Form -->
 <form method="POST">
-    <?php if($edit_class): ?>
-        <input type="hidden" name="id" value="<?= $edit_class['id'] ?>">
-    <?php endif; ?>
-    <input name="grade" placeholder="Grade (e.g., Grade 1, Form 2)" value="<?= $edit_class ? htmlspecialchars($edit_class['grade']) : '' ?>" required>
-    <select name="teacher" required>
-        <option value="">Select Teacher</option>
-        <?php 
-        mysqli_data_seek($teachers_result, 0);
-        while($teacher = mysqli_fetch_assoc($teachers_result)): 
-            $selected = ($edit_class && $edit_class['teacher'] == $teacher['fullname']) ? 'selected' : '';
-        ?>
-            <option value="<?= htmlspecialchars($teacher['fullname']) ?>" <?= $selected ?>>
-                <?= htmlspecialchars($teacher['fullname']) ?>
-            </option>
-        <?php endwhile; ?>
-    </select>
-    <input name="subjects" placeholder="Subjects (comma-separated)" value="<?= $edit_class ? htmlspecialchars($edit_class['subjects']) : '' ?>" required>
-    <input name="time" placeholder="Time (e.g., 8:00 AM - 10:00 AM)" value="<?= $edit_class ? htmlspecialchars($edit_class['time']) : '' ?>" required>
-    <button name="<?= $edit_class ? 'edit_class' : 'add_class' ?>">
-        <?= $edit_class ? 'Update Class' : 'Add Class' ?>
-    </button>
-    <?php if($edit_class): ?>
-        <a href="classes.php" style="background:#6b7280; color:#fff; padding:12px 25px; border-radius:8px; text-decoration:none; font-weight:600; display:inline-block;">Cancel</a>
-    <?php endif; ?>
+    <input name="grade" placeholder="Grade" required>
+    <input name="teacher" placeholder="Teacher" required>
+    <input name="subjects" placeholder="Subjects (comma-separated)" required>
+    <input name="time" placeholder="Time" required>
+    <button name="add_class">Add Class</button>
 </form>
 
 <!-- Classes Table -->
@@ -248,8 +174,7 @@ a.delete-btn:hover {
         <td><?= htmlspecialchars($row['teacher']) ?></td>
         <td><?= htmlspecialchars($row['subjects']) ?></td>
         <td><?= htmlspecialchars($row['time']) ?></td>
-        <td style="display:flex; gap:8px; align-items:center;">
-            <a href="?edit=<?= $row['id'] ?>" style="background:#3b82f6; color:#fff; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:13px;">Edit</a>
+        <td>
             <a href="?delete=<?= $row['id'] ?>" onclick="return confirm('Are you sure you want to delete this class?')" class="delete-btn">Delete</a>
         </td>
     </tr>

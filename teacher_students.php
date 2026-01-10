@@ -9,35 +9,17 @@ if (!isset($_SESSION['teacher']) || $_SESSION['role'] != 'teacher') {
 
 include 'connect.php';
 
-$teacher_id = $_SESSION['teacher_id'];
-$teacher_name = $_SESSION['teacher_name'];
-
 // Helper function
 function h($value) {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
 }
 
-// Get teacher's assigned class grades
-$teacher_classes_query = mysqli_query($conn, "SELECT grade FROM classes WHERE teacher LIKE '%$teacher_name%'");
-$teacher_class_grades = [];
-while ($row = mysqli_fetch_assoc($teacher_classes_query)) {
-    $teacher_class_grades[] = mysqli_real_escape_string($conn, $row['grade']);
-}
-
-// Build WHERE clause for class filtering
-$class_filter = '';
-if (!empty($teacher_class_grades)) {
-    $class_list = "'" . implode("','", $teacher_class_grades) . "'";
-    $class_filter = "AND class IN ($class_list)";
-}
-
 // Handle search
 $search = trim($_GET['search'] ?? '');
 if ($search) {
-    $search_escaped = mysqli_real_escape_string($conn, $search);
-    $students_query = mysqli_query($conn, "SELECT * FROM students WHERE (fullname LIKE '%$search_escaped%' OR adm_no LIKE '%$search_escaped%' OR class LIKE '%$search_escaped%') $class_filter ORDER BY class, fullname ASC");
+    $students_query = mysqli_query($conn, "SELECT * FROM students WHERE fullname LIKE '%$search%' OR adm_no LIKE '%$search%' OR class LIKE '%$search%' ORDER BY class, fullname ASC");
 } else {
-    $students_query = mysqli_query($conn, "SELECT * FROM students WHERE 1=1 $class_filter ORDER BY class, fullname ASC");
+    $students_query = mysqli_query($conn, "SELECT * FROM students ORDER BY class, fullname ASC");
 }
 ?>
 
@@ -162,19 +144,8 @@ tr:hover {
 <!-- Main -->
 <div class="main">
   <div class="header">
-    <div>
-      <h2>View Students</h2>
-      <p>Students from your assigned classes (Read-only)</p>
-      <?php if(!empty($teacher_classes_list)): ?>
-        <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
-          <?php foreach($teacher_classes_list as $class): ?>
-            <span style="background: rgba(255,114,0,0.2); border: 1px solid var(--accent); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--accent);">
-              <?= h($class['grade']) ?>
-            </span>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
-    </div>
+    <h2>View Students</h2>
+    <p>Browse all students (Read-only)</p>
   </div>
 
   <a href="teacher_dashboard.php" class="btn-secondary">⬅ Back to Dashboard</a>

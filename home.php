@@ -119,7 +119,7 @@ $events_result = $conn->query("SELECT * FROM events ORDER BY date ASC LIMIT 3");
         <a href="aboutus.php">About Us</a>
         <a href="events.php">Events</a>
         <a href="profile.php">Profile</a>
-        <a href="Contactus.html">Contact</a>
+        <a href="Contactus.php">Contact</a>
         <a href="logout.php" style="color:var(--accent);">Logout</a>
       </nav>
     </header>
