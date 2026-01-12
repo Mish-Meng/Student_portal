@@ -118,6 +118,8 @@ $events_result = $conn->query("SELECT * FROM events ORDER BY date ASC LIMIT 3");
         <a href="home.php">Home</a>
         <a href="aboutus.php">About Us</a>
         <a href="events.php">Events</a>
+        <a href="student_timetable.php">📅 Timetable</a>
+        <a href="exams_results.php">📊 Results</a>
         <a href="profile.php">Profile</a>
         <a href="Contactus.php">Contact</a>
         <a href="logout.php" style="color:var(--accent);">Logout</a>
@@ -149,6 +151,8 @@ $events_result = $conn->query("SELECT * FROM events ORDER BY date ASC LIMIT 3");
       </div>
       <a class="cta" href="payment.php">Payment</a>
       <a class="cta" href="admissions.php">Admission</a>
+      <a class="cta" href="student_timetable.php">📅 My Timetable</a>
+      <a class="cta" href="exams_results.php">📊 Results</a>
     </section>
 
     <!-- Events Section -->

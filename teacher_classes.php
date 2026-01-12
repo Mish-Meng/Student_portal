@@ -154,6 +154,7 @@ while ($student = mysqli_fetch_assoc($all_students)) {
       <li><a href="teacher_profile.php">👤 My Profile</a></li>
       <li><a href="teacher_results.php">📊 Manage Marks</a></li>
       <li><a href="teacher_classes.php">🏫 Class Assignments</a></li>
+      <li><a href="teacher_timetable.php">📅 My Timetable</a></li>
       <li><a href="teacher_attendance.php">✅ Attendance</a></li>
       <li><a href="teacher_students.php">👩‍🎓 View Students</a></li>
     </ul>
@@ -197,6 +198,12 @@ while ($student = mysqli_fetch_assoc($all_students)) {
           </div>
           <div class="class-info">
             <strong>Teacher:</strong> <?= h($class['teacher']) ?>
+          </div>
+          <div style="margin-top: 12px;">
+            <a href="teacher_timetable.php?class=<?= urlencode($class['grade']) ?>" 
+               style="background: var(--accent); color: #000; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; display: inline-block;">
+              📅 View Timetable
+            </a>
           </div>
         </div>
       <?php endwhile; ?>

@@ -174,7 +174,8 @@ a.delete-btn:hover {
         <td><?= htmlspecialchars($row['teacher']) ?></td>
         <td><?= htmlspecialchars($row['subjects']) ?></td>
         <td><?= htmlspecialchars($row['time']) ?></td>
-        <td>
+        <td style="display:flex; gap:8px; align-items:center;">
+            <a href="admin_timetable.php?class=<?= urlencode($row['grade']) ?>" style="background:#3b82f6; color:#fff; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:13px;">Timetable</a>
             <a href="?delete=<?= $row['id'] ?>" onclick="return confirm('Are you sure you want to delete this class?')" class="delete-btn">Delete</a>
         </td>
     </tr>

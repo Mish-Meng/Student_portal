@@ -161,6 +161,7 @@ if (isset($_POST['update_profile'])) {
       <li><a href="teacher_profile.php">👤 My Profile</a></li>
       <li><a href="teacher_results.php">📊 Manage Marks</a></li>
       <li><a href="teacher_classes.php">🏫 Class Assignments</a></li>
+      <li><a href="teacher_timetable.php">📅 My Timetable</a></li>
       <li><a href="teacher_attendance.php">✅ Attendance</a></li>
       <li><a href="teacher_students.php">👩‍🎓 View Students</a></li>
     </ul>

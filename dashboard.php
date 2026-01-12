@@ -56,6 +56,7 @@ if (isset($_POST['logout'])) {
       <li><a href="teachers.php">👨‍🏫 Teachers</a></li>
       <li><a href="students.php">👩‍🎓 Students</a></li>
       <li><a href="classes.php">🏫 Classes</a></li>
+      <li><a href="admin_timetable.php">📅 Timetables</a></li>
       <li><a href="view_payments.php">💳 Payments</a></li>
       <li><a href="admin_results.php">📊 Results</a></li>
       <li><a href="#">⚙️ Settings</a></li>
